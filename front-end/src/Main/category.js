@@ -1,8 +1,17 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import $ from "jquery"
+
 export const Category = () => {
 
+    $("#scrollToTopButton").click(function () {
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        return false;
+    })
+
     const [movieData, setmovieData] = useState([]);
+    const [category, setcategory] = useState([]);
+    const [categoryname, setcategoryName] = useState([]);
     const [view, setview] = useState([]);
     const [searchData, setsearchData] = useState([]);
 
@@ -18,6 +27,28 @@ export const Category = () => {
             setsearchData([]);
         }
         catch (err) {
+            console.log("Error:", err);
+        }
+    }
+
+    const Category = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/anime-category/category')
+            setcategory(response.data.data);
+        } catch (err) {
+            console.log("Error:", err);
+        }
+    }
+
+    const Categorydata = async () => {
+        try {
+            let id = document.getElementById("category").value;
+            const response = await axios.get(`http://localhost:3001/anime-main/movie/${id}`)
+            if (response.data.length != 0) {
+                setmovieData(response.data)
+                setcategoryName(response.data[0].categoryId.name)
+            }
+        } catch (err) {
             console.log("Error:", err);
         }
     }
@@ -38,6 +69,7 @@ export const Category = () => {
 
     useEffect(() => {
         Data();
+        Category();
     }, [])
     return (
 
@@ -52,25 +84,12 @@ export const Category = () => {
                 <title>Anime | Template</title>
 
                 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-                <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap"
-                    rel="stylesheet" />
-
+                <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
                 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
                 <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
                 <link rel="stylesheet" href="css/elegant-icons.css" type="text/css" />
-                <link rel="stylesheet" href="css/plyr.css" type="text/css" />
-                <link rel="stylesheet" href="css/nice-select.css" type="text/css" />
-                <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css" />
-                <link rel="stylesheet" href="css/slicknav.min.css" type="text/css" />
                 <link rel="stylesheet" href="css/style.css" type="text/css" />
-                <script src="js/jquery-3.3.1.min.js"></script>
-                <script src="js/bootstrap.min.js"></script>
-                <script src="js/player.js"></script>
-                <script src="js/jquery.nice-select.min.js"></script>
-                <script src="js/mixitup.min.js"></script>
-                <script src="js/jquery.slicknav.js"></script>
-                <script src="js/owl.carousel.min.js"></script>
-                <script src="js/main.js"></script>
+
             </head>
 
             <body>
@@ -123,7 +142,7 @@ export const Category = () => {
                                 <div className="breadcrumb__links">
                                     <a href="/index"><i className="fa fa-home"></i> Home</a>
                                     <a href="/category">Categories</a>
-                                    <span>Romance</span>
+                                    <span>{categoryname}</span>
                                 </div>
                             </div>
                         </div>
@@ -138,16 +157,20 @@ export const Category = () => {
                                         <div className="row">
                                             <div className="col-lg-8 col-md-8 col-sm-6">
                                                 <div className="section-title">
-                                                    <h4>Romance</h4>
+                                                    <h4>{categoryname}</h4>
                                                 </div>
                                             </div>
                                             <div className="col-lg-4 col-md-4 col-sm-6">
                                                 <div className="product__page__filter">
                                                     <p>Order by:</p>
-                                                    <select>
-                                                        <option value="">A-Z</option>
-                                                        <option value="">1-10</option>
-                                                        <option value="">10-50</option>
+                                                    <select onChange={() => Categorydata()} id='category'>
+                                                        {
+                                                            category.map((val) => {
+                                                                return (
+                                                                    <option key={val._id} value={val._id}>{val.name}</option>
+                                                                )
+                                                            })
+                                                        }
                                                     </select>
                                                 </div>
                                             </div>
@@ -160,8 +183,8 @@ export const Category = () => {
                                                     <div className="col-lg-4 col-md-6 col-sm-6" key={v._id}>
                                                         <div className="product__item">
                                                             <div className="product__item__pic set-bg">
-                                                            <img src={v.image}></img>
-                                                            <div className="ep">{v.releasedEpisode}/{v.totalEpisode}</div>
+                                                                <img src={v.image}></img>
+                                                                <div className="ep">{v.releasedEpisode}/{v.totalEpisode}</div>
                                                                 <div className="comment"><i className="fa fa-comments"></i> 11</div>
                                                                 <div className="view"><i className="fa fa-eye"></i> 9141</div>
                                                             </div>

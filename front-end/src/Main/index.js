@@ -1,9 +1,13 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { Helmet } from "react-helmet";
+import $ from "jquery"
 
 export const Index = () => {
 
+    $("#scrollToTopButton").click(function () {
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        return false;
+    })
     const [recentmovieData, setrecentmovieData] = useState([]);
     const [newmovieData, setnewmovieData] = useState([]);
     const [movieData, setmovieData] = useState([]);
@@ -57,9 +61,6 @@ export const Index = () => {
                 <title>Anime | Template</title>
                 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
                 <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-                <link rel="stylesheet" href="css/nice-select.css" />
-                <link rel="stylesheet" href="css/owl.carousel.min.css" />
-                <link rel="stylesheet" href="css/slicknav.min.css" type="text/css" />
                 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
                 <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
                 <link rel="stylesheet" href="css/elegant-icons.css" type="text/css" />
@@ -109,6 +110,7 @@ export const Index = () => {
                         <div id="mobile-menu-wrap"></div>
                     </div>
                 </header>
+
                 <section className="product spad">
                     <div className="container">
                         <div className="row">
@@ -159,11 +161,6 @@ export const Index = () => {
                                                 <h4>Trending Now</h4>
                                             </div>
                                         </div>
-                                        <div className="col-lg-4 col-md-4 col-sm-4">
-                                            <div className="btn__all">
-                                                <a href="/category" className="primary-btn">View All <span className="arrow_right"></span></a>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div className="row">
                                         {
@@ -191,16 +188,11 @@ export const Index = () => {
                                         }
                                     </div>
                                 </div>
-                                <div className="popular__product">
+                                <div className="popular__product mt-5">
                                     <div className="row">
                                         <div className="col-lg-8 col-md-8 col-sm-8">
                                             <div className="section-title">
                                                 <h4>POPULAR SHOWS</h4>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-4 col-md-4 col-sm-4">
-                                            <div className="btn__all">
-                                                <a href="/category" className="primary-btn">View All <span className="arrow_right"></span></a>
                                             </div>
                                         </div>
                                     </div>
@@ -246,7 +238,6 @@ export const Index = () => {
                                         <div className="filter__gallery">
                                             {
                                                 view.map((v) => {
-                                                    console.log(v);
                                                     return (
                                                         <div className="product__sidebar__view__item " key={v._id}>
                                                             <img key={v._id} src={v.image}></img>
@@ -264,6 +255,7 @@ export const Index = () => {
                         </div>
                     </div>
                 </section>
+
                 <footer className="footer">
                     <div className="page-up">
                         <a href="#" id="scrollToTopButton"><span className="arrow_carrot-up"></span></a>
@@ -288,17 +280,7 @@ export const Index = () => {
                         </div>
                     </div>
                 </footer>
-                <Helmet>
-                    <script src="js/jquery.nice-select.min.js" type="text/javascript"></script>
-                    <script src="js/jquery.slicknav.js" type="text/javascript"></script>
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="js/jquery-3.3.1.min.js"></script>
-                    <script src="js/bootstrap.min.js" type="text/javascript"></script>
-                    <script src="js/player.js" type="text/javascript"></script>
-                    <script src="js/mixitup.min.js" type="text/javascript"></script>
-                    <script src="js/owl.carousel.min.js" type="text/javascript"></script>
-                    <script src="js/main.js" type="text/javascript"></script>
-                </Helmet>
+
             </body>
 
         </html>

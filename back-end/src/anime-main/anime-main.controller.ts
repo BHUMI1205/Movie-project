@@ -57,7 +57,6 @@ export class AnimeMainController {
     @ApiOperation({ summary: 'Filter By Date' })
     @Get('filterByDate')
     async dateFilter(@Query() dateFilterDto: dateFilterDto) {
-
         return await this.animeMainService.dateFilter(dateFilterDto)
     }
 }

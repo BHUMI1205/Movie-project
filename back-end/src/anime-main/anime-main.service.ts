@@ -39,7 +39,7 @@ export class AnimeMainService {
 
     async getAll(searchMovieDto) {
         let movieData;
-        movieData = await this.moviemodel.find({}).limit(8)
+        movieData = await this.moviemodel.find({}).limit(4)
             .populate('categoryId', 'name')
             .select('name image release_Date status categoryId releasedEpisode totalEpisode')
 
@@ -164,7 +164,8 @@ export class AnimeMainService {
     }
 
     async filterByCategory(categoryId) {
-        return await this.moviemodel.find({ categoryId: categoryId }).populate('categoryId', 'name').select('name release_Date status categoryId ').limit(3)
+        
+        return await this.moviemodel.find({ categoryId: categoryId }).populate('categoryId', 'name').select('name image release_Date status categoryId releasedEpisode totalEpisode')
     }
 
     async dateFilter(dateFilterDto) {
@@ -186,7 +187,7 @@ export class AnimeMainService {
                     totalEpisode: '$totalEpisode'
                 }
             }
-        ]).limit(8)
+        ]).limit(4)
 
         return data;
     }
