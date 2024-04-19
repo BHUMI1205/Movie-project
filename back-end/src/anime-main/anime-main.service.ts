@@ -3,10 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as cloudinary from 'cloudinary';
 import { Movie, MovieDocument } from './entity/anime.entity';
-
+import { buffer } from 'stream/consumers';
+import { Category, CategoryDocument } from 'src/anime-category/entity/category.entity';
+import mongoose from 'mongoose'
 @Injectable()
 export class AnimeMainService {
-    constructor(@InjectModel(Movie.name) private moviemodel: Model<MovieDocument>) {
+    constructor(@InjectModel(Movie.name) private moviemodel: Model<MovieDocument>,
+        @InjectModel(Category.name) private categorymodel: Model<CategoryDocument>) {
 
         cloudinary.v2.config({
             cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -39,10 +42,9 @@ export class AnimeMainService {
 
     async getAll(searchMovieDto) {
         let movieData;
-        movieData = await this.moviemodel.find({}).limit(4)
+        movieData = await this.moviemodel.find({})
             .populate('categoryId', 'name')
             .select('name image release_Date status categoryId releasedEpisode totalEpisode')
-
         if (searchMovieDto.name != undefined) {
             const data = await this.moviemodel.find({ name: { $regex: searchMovieDto.name, $options: 'i' } })
                 .populate('categoryId', 'name')
@@ -74,6 +76,7 @@ export class AnimeMainService {
         movieData = await this.moviemodel.find({})
             .populate('categoryId', 'name')
             .select('name image release_Date status categoryId releasedEpisode totalEpisode').limit(3)
+
         if (searchMovieDto.name != undefined) {
             const data = await this.moviemodel.find({ name: { $regex: searchMovieDto.name, $options: 'i' } })
                 .populate('categoryId', 'name')
@@ -96,23 +99,33 @@ export class AnimeMainService {
         };
     }
 
-    async create(createMovieDto, imageData: Buffer) {
-        const result = await this.uploadImageToCloudinary(imageData);
+    async getOne(id) {
+        let movieData = await this.moviemodel.findById(id).populate('categoryId', 'name')
+            .select('name image release_Date status categoryId releasedEpisode totalEpisode')
+        return {
+            status: HttpStatus.OK,
+            data: movieData,
+            message: 'Movie Data Get Successfully'
+        };
+    }
+
+    async create(createMovieDto, imageData: any) {
+
+        let buffer = imageData.buffer
+        const result = await this.uploadImageToCloudinary(buffer);
+
         const imageUrl = result.url;
         const publicId = result.public_id;
 
         const moviedata = await new this.moviemodel({
-            name: createMovieDto.name,
-            status: createMovieDto.status,
-            description: createMovieDto.description,
-            categoryId: createMovieDto.categoryId,
-            release_Date: createMovieDto.release_Date,
-            releasedEpisode: createMovieDto.releasedEpisode,
-            totalEpisode: createMovieDto.totalEpisode,
+            ...createMovieDto,
             image: imageUrl,
             publicId: publicId
         })
         moviedata.save()
+
+        await this.categorymodel.findByIdAndUpdate(createMovieDto.categoryId, { $inc: { movieCount: 1 } })
+
         return {
             status: HttpStatus.CREATED,
             data: moviedata,
@@ -120,26 +133,29 @@ export class AnimeMainService {
         };
     }
 
-    async update(updateMovieDto, id, imageData: Buffer) {
-        const result = await this.uploadImageToCloudinary(imageData);
-        const imageUrl = result.url;
-        const publicId = result.public_id;
+    async update(updateMovieDto, id, imageData: any) {
+
+        let category = await this.moviemodel.findById(id)
 
         if (id && imageData) {
+            const result = await this.uploadImageToCloudinary(imageData.buffer);
+            const imageUrl = result.url;
+            const publicId = result.public_id
             const data = await this.moviemodel.findById(id)
             cloudinary.v2.uploader.destroy(data.publicId);
+            updateMovieDto.image = imageUrl;
+            updateMovieDto.publicId = publicId;
         }
+
         const data = await this.moviemodel.findByIdAndUpdate(id, {
-            name: updateMovieDto.name,
-            status: updateMovieDto.status,
-            release_Date: updateMovieDto.release_Date,
-            categoryId: updateMovieDto.categoryId,
-            totalEpisode: updateMovieDto.totalEpisode,
-            releasedEpisode: updateMovieDto.release_Date,
-            description: updateMovieDto.description,
-            image: imageUrl,
-            publicId: publicId
+            ...updateMovieDto,
         })
+
+        if (updateMovieDto.categoryId != category.categoryId) {
+            await this.categorymodel.findByIdAndUpdate(updateMovieDto.categoryId, { $inc: { movieCount: 1 } })
+            await this.categorymodel.findByIdAndUpdate(category.categoryId, { $inc: { movieCount: -1 } })
+        }
+
         return {
             status: HttpStatus.OK,
             data: data,
@@ -148,6 +164,7 @@ export class AnimeMainService {
     }
 
     async remove(id) {
+
         const data = await this.moviemodel.findByIdAndDelete(id)
         cloudinary.v2.uploader.destroy(data.publicId);
 
@@ -164,8 +181,13 @@ export class AnimeMainService {
     }
 
     async filterByCategory(categoryId) {
-        
-        return await this.moviemodel.find({ categoryId: categoryId }).populate('categoryId', 'name').select('name image release_Date status categoryId releasedEpisode totalEpisode')
+
+        let data = await this.moviemodel.find({ categoryId: categoryId }).populate('categoryId', 'name').select('name image release_Date status categoryId description releasedEpisode totalEpisode')
+        return {
+            status: HttpStatus.OK,
+            data: data,
+            message: 'Movie collected Successfully'
+        };
     }
 
     async dateFilter(dateFilterDto) {

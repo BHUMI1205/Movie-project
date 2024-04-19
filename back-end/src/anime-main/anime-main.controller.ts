@@ -20,8 +20,14 @@ export class AnimeMainController {
 
     @ApiOperation({ summary: 'Get Movie Details' })
     @Get('movie')
-    async get(@Param() searchMovieDto: SearchMovieDto) {
+    async get(@Query() searchMovieDto: SearchMovieDto) {
         return await this.animeMainService.get(searchMovieDto)
+    }
+
+    @ApiOperation({ summary: 'Get Movie Details' })
+    @Get('movie/getOne')
+    async getOne(@Query('id') id: string) {
+        return await this.animeMainService.getOne(id)
     }
 
     @Post('movie')
@@ -30,27 +36,31 @@ export class AnimeMainController {
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     async add(@Body() createMovieDto: CreateMovieDto, @UploadedFile() imageData: Express.Multer.File) {
-        return await this.animeMainService.create(createMovieDto, imageData.buffer)
+        let imagedata = imageData == undefined ? createMovieDto.image : imageData;
+        return await this.animeMainService.create(createMovieDto, imagedata)
     }
 
     @Patch('movie')
     @ApiOperation({ summary: 'Update Movie Details' })
-    @ApiBody({ type: UpdateMovieDto })
+    @ApiBody({ type: UpdateMovieDto, required: false })
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     async update(@Query('id') id: string, @Body() updateMovieDto: UpdateMovieDto, @UploadedFile() imageData: Express.Multer.File) {
-        return this.animeMainService.update(updateMovieDto, id,imageData.buffer)
+        if (!id) {
+            id = updateMovieDto.id
+        }
+        return await this.animeMainService.update(updateMovieDto, id, imageData)
     }
 
     @ApiOperation({ summary: 'Remove Movie Details' })
-    @Delete('movie/:id')
-    async remove(@Param('id') id: string) {
-        return this.animeMainService.remove(id)
+    @Delete('movie')
+    async remove(@Query('id') id: string) {
+        return await this.animeMainService.remove(id)
     }
 
     @ApiOperation({ summary: 'Filter By Category' })
-    @Get('movie/:id')
-    async filter(@Param('id') categoryId: string) {
+    @Get('movie/ByCategory')
+    async filter(@Query('id') categoryId: string) {
         return await this.animeMainService.filterByCategory(categoryId)
     }
 

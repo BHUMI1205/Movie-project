@@ -6,6 +6,12 @@ export class CreateMovieDto {
     @IsString()
     @MaxLength(30)
     @IsNotEmpty()
+    @ApiProperty({ required: false })
+    readonly id: string;
+
+    @IsString()
+    @MaxLength(30)
+    @IsNotEmpty()
     @ApiProperty()
     readonly name: string;
 

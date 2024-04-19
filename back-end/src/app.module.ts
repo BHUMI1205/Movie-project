@@ -1,12 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AnimeCategoryModule } from './anime-category/anime-category.module';
 import { AnimeMainModule } from './anime-main/anime-main.module';
-import { ConfigModule } from '@nestjs/config';
+import { LoggerMiddleware } from './logger.middleware';
+
 ConfigModule.forRoot()
 
 @Module({
@@ -22,4 +24,9 @@ ConfigModule.forRoot()
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

@@ -130,6 +130,7 @@ export const Register = () => {
           </div>
         </section>
       </body>
+
     </html>
   )
 }

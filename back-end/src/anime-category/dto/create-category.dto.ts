@@ -1,7 +1,11 @@
-import { IsNotEmpty, IsEmail, IsString, MaxLength } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateCategoryDto {
+
+    @IsOptional()
+    @ApiProperty()
+    readonly id: string;
 
     @IsString()
     @MaxLength(30)
@@ -9,9 +13,8 @@ export class CreateCategoryDto {
     @ApiProperty()
     readonly name: string;
 
-    @IsEmail()
     @IsNotEmpty()
-    @ApiProperty()
+    @ApiProperty({ enum: ['Active', 'Inactive'] })
     readonly status: string;
 
 }

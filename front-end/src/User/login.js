@@ -14,6 +14,7 @@ export const Login = () => {
       email: email,
       password: password,
     })
+
     if (users) {
       setEmail("");
       setPassword("");
@@ -23,6 +24,7 @@ export const Login = () => {
       return false;
     }
   }
+
   return (
     <html lang="zxx">
       <head>

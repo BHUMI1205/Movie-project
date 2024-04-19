@@ -6,6 +6,9 @@ export class Category {
     @Prop()
     name: string;
 
+    @Prop({ default: 0 })
+    movieCount: number;
+
     @Prop()
     status: string;
 

@@ -9,6 +9,9 @@ export class Movie {
     @Prop()
     status: string;
 
+    @Prop({ ref: 'Category' })
+    categoryId: string;
+
     @Prop()
     episode: number;
 
@@ -29,9 +32,6 @@ export class Movie {
 
     @Prop()
     release_Date: number;
-
-    @Prop({ ref: 'Category' })
-    categoryId: string
 
     @Prop({ default: new Date() })
     createdAt: number;
