@@ -38,7 +38,7 @@ export const MovieAdd = () => {
         try {
             console.log(image);
             e.preventDefault();
-            await axios.post('http://localhost:3001/anime-main/movie', {
+            let response =await axios.post('http://localhost:3001/anime-main/movie', {
                 name: name,
                 image: image,
                 status: status,

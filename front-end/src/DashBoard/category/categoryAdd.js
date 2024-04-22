@@ -15,7 +15,7 @@ export const CategoryAdd = () => {
     const handleSubmit = async (e) => {
         try {
             e.preventDefault();
-             await axios.post('http://localhost:3001/anime-category/category', {
+            let response = await axios.post('http://localhost:3001/anime-category/category', {
                 name: name,
                 status: status,
             });
@@ -49,7 +49,7 @@ export const CategoryAdd = () => {
                                     <option value={'Inactive'}>Inactive</option>
                                 </select>
                             </div>
-                        </div> 
+                        </div>
                         <div className="form-group row">
                             <div className="col-sm-2 offset-sm-2">
                                 <button type="submit" className="btn btn-primary">Submit</button>

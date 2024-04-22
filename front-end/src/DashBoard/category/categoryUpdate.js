@@ -34,7 +34,7 @@ export const CategoryUpdate = () => {
     const handleSubmit = async (e) => {
         try {
             e.preventDefault();
-             await axios.patch('http://localhost:3001/anime-category/category', {
+            let response = await axios.patch('http://localhost:3001/anime-category/category', {
                 id: id,
                 name: name,
                 status: status,

@@ -20,7 +20,7 @@ export const MovieUpdate = () => {
     const [releasedEpisode, setReleasedEpisode] = useState("");
     const [releasedDate, setReleasedDate] = useState("");
     const [description, setDescription] = useState("");
-    const [categories, setcategories] = useState([]);
+    const [categories, setCategories] = useState([]);
 
     const movieData = async () => {
         try {
@@ -30,11 +30,10 @@ export const MovieUpdate = () => {
                 }
             })
             let data = response.data.data;
-            console.log(data);
             setName(data.name)
             setImage(data.image)
             setStatus(data.status)
-            setCategory(data.categoryId._id)
+            setCategory(data.categoryId)
             setTotalEpisode(data.totalEpisode)
             setReleasedEpisode(data.releasedEpisode)
             setReleasedDate(data.release_Date)
@@ -48,7 +47,7 @@ export const MovieUpdate = () => {
     const categoryData = async () => {
         try {
             const response = await axios.get('http://localhost:3001/anime-category/category');
-            setcategories(response.data.data);
+            setCategories(response.data.data);
         }
         catch (err) {
             console.log(err);
@@ -62,20 +61,20 @@ export const MovieUpdate = () => {
     const handleSubmit = async (e) => {
         try {
             e.preventDefault();
-            await axios.patch('http://localhost:3001/anime-main/movie', {
-                id: id,
-                name: name,
-                image: image,
-                status: status,
-                categoryId: category,
-                totalEpisode: totalEpisode,
-                releasedEpisode: releasedEpisode,
-                releasedDate: releasedDate,
-                description: description
-            }, {
+            let response = await axios.patch('http://localhost:3001/anime-main/movie',
+                {
+                    id: id,
+                    name: name,
+                    image: image,
+                    status: status,
+                    categoryId: category,
+                    totalEpisode: totalEpisode,
+                    releasedEpisode: releasedEpisode,
+                    releasedDate: releasedDate,
+                    description: description
+                }, {
                 headers: { 'Content-Type': 'multipart/form-data' }
-            }
-            );
+            });
             setName("");
             setImage("");
             setStatus("");

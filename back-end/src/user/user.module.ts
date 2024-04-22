@@ -5,6 +5,8 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User, UserSchema } from './entity/user.entity';
 import { ConfigModule } from '@nestjs/config';
+
+
 ConfigModule.forRoot()
 
 @Module({

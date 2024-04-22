@@ -46,6 +46,7 @@ export class AnimeMainController {
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     async update(@Query('id') id: string, @Body() updateMovieDto: UpdateMovieDto, @UploadedFile() imageData: Express.Multer.File) {
+        
         if (!id) {
             id = updateMovieDto.id
         }

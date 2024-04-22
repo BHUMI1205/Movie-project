@@ -3,9 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as cloudinary from 'cloudinary';
 import { Movie, MovieDocument } from './entity/anime.entity';
-import { buffer } from 'stream/consumers';
-import { Category, CategoryDocument } from 'src/anime-category/entity/category.entity';
-import mongoose from 'mongoose'
+import { Category, CategoryDocument } from '../anime-category/entity/category.entity';
+
 @Injectable()
 export class AnimeMainService {
     constructor(@InjectModel(Movie.name) private moviemodel: Model<MovieDocument>,
@@ -100,12 +99,13 @@ export class AnimeMainService {
     }
 
     async getOne(id) {
-        let movieData = await this.moviemodel.findById(id).populate('categoryId', 'name')
-            .select('name image release_Date status categoryId releasedEpisode totalEpisode')
+        let movieData = await this.moviemodel.findById(id)
+            .select('name image release_Date status categoryId releasedEpisode totalEpisode description')
+            
         return {
             status: HttpStatus.OK,
             data: movieData,
-            message: 'Movie Data Get Successfully'
+            message: 'Movie Data Get Successfully' 
         };
     }
 

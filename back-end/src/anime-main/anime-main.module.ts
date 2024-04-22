@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AnimeMainController } from './anime-main.controller';
 import { AnimeMainService } from './anime-main.service';
 import { Movie, MovieSchema } from './entity/anime.entity';
 import { ConfigModule } from '@nestjs/config';
-import { Category, CategorySchema } from 'src/anime-category/entity/category.entity';
+import { Category, CategorySchema } from '../anime-category/entity/category.entity';
 ConfigModule.forRoot()
 
 @Module({
@@ -17,7 +17,7 @@ ConfigModule.forRoot()
     })
   ],
   controllers: [AnimeMainController],
-  providers: [AnimeMainService]
+  providers: [AnimeMainService,JwtService]
 })
 export class AnimeMainModule { }
 
